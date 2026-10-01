@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bee Bloow • Abelhinha</title>
+    <meta name="description" content="Atendimento virtual da Bee Bloow: produtos para extensão de cílios, pedidos, pagamento, frete e contato.">
+    <meta name="theme-color" content="#c2185b">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐝%3C/text%3E%3C/svg%3E">
+
+    <style>
+        /* ===== PALETA (edite aqui) ===== */
+        :root {
+            --rosa:         #c2185b;  /* cabeçalho e botão enviar */
+            --rosa-claro:   #e0558a;  /* fim do gradiente e hover */
+            --destaque:     #f9c9dc;  /* balão do usuário, ícone, hover */
+            --texto-rosa:   #a3134d;  /* links, botões e rótulos sobre branco */
+            --texto-escuro: #4a1530;  /* texto sobre o destaque */
+            --nude:         #f6e3d8;
+            --fundo-claro:  #fff7fa;
+            --fundo-chat:   #fbf6f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--fundo-claro), var(--nude));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 430px;
+            height: 700px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(74, 21, 48, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CABEÇALHO */
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--rosa), var(--rosa-claro));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 3px solid var(--destaque);
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--destaque);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .header-info h2 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 19px;
+            font-weight: normal;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .status {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .online {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--destaque);
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        /* ÁREA DO CHAT */
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--fundo-chat);
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .message.bot  { justify-content: flex-start; }
+        .message.user { justify-content: flex-end; }
+
+        .message-content {
+            max-width: 78%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(74, 21, 48, 0.08);
+        }
+
+        .user .message-content {
+            background: var(--destaque);
+            color: var(--texto-escuro);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-content a {
+            color: var(--texto-rosa);
+            font-weight: bold;
+        }
+
+        .time {
+            display: block;
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.6;
+        }
+
+        /* OPÇÕES */
+
+        .quick-options {
+            padding: 10px 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .quick-options p {
+            font-size: 12px;
+            color: var(--texto-rosa);
+            margin-bottom: 8px;
+        }
+
+        .options {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .option {
+            border: 1px solid var(--texto-rosa);
+            background: white;
+            color: var(--texto-rosa);
+            padding: 8px 11px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            background: var(--destaque);
+            border-color: var(--destaque);
+            color: var(--texto-escuro);
+        }
+
+        /* CAMPO DE DIGITAÇÃO */
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: #f4efeb;
+            border-radius: 25px;
+            padding: 13px 17px;
+            font-size: 14px;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: var(--rosa);
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+
+        .send-button:hover {
+            background: var(--rosa-claro);
+            transform: scale(1.05);
+        }
+
+        .option:focus-visible,
+        .send-button:focus-visible,
+        .chat-input input:focus-visible {
+            outline: 2px solid var(--texto-rosa);
+            outline-offset: 2px;
+        }
+
+        /* DIGITANDO */
+
+        .typing {
+            display: none;
+            font-size: 12px;
+            color: #777;
+            padding: 0 20px 8px;
+            background: var(--fundo-chat);
+        }
+
+        /* RESPONSIVO */
+
+        @media (max-width: 500px) {
+            body { padding: 0; }
+
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- CABEÇALHO -->
+    <div class="chat-header">
+        <div class="brand-icon" aria-hidden="true">🐝</div>
+
+        <div class="header-info">
+            <h2>Bee Bloow</h2>
+            <div class="status">
+                <span class="online"></span>
+                Online
+            </div>
+        </div>
+    </div>
+
+    <!-- MENSAGENS (preenchidas via JS) -->
+    <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+
+    <!-- INDICADOR -->
+    <div class="typing" id="typing">
+        🐝 Abelhinha está digitando...
+    </div>
+
+    <!-- OPÇÕES -->
+    <div class="quick-options">
+        <p>Escolha uma opção:</p>
+
+        <div class="options">
+            <button class="option" data-msg="Quais produtos vocês têm?">🛍️ Produtos</button>
+            <button class="option" data-msg="Quais são os preços e promoções?">💰 Preços</button>
+            <button class="option" data-msg="Como faço um pedido?">📦 Pedido</button>
+            <button class="option" data-msg="Como funciona o frete?">🚚 Frete</button>
+            <button class="option" data-msg="Quais as formas de pagamento?">💳 Pagamento</button>
+            <button class="option" data-msg="Qual o site da loja?">🌐 Site</button>
+            <button class="option" data-msg="Quero falar com um atendente">💬 Atendente</button>
+        </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="chat-input">
+        <input
+            type="text"
+            id="messageInput"
+            placeholder="Digite sua mensagem..."
+            aria-label="Digite sua mensagem"
+            autocomplete="off"
+        >
+
+        <button class="send-button" id="sendButton" aria-label="Enviar mensagem">➤</button>
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ===== DADOS DA LOJA (edite aqui) ===== */
+    const WHATS_NUMBER = "5514991353315";   // somente dígitos, com DDI e DDD
+    const WHATS_LINK   = `https://wa.me/${WHATS_NUMBER}`;
+    const CONSULTE     = `fale com a nossa equipe pelo <a href="${WHATS_LINK}" target="_blank" rel="noopener">WhatsApp</a>`;
+
+    const CONFIG = {
+        categorias:  "Cílios fio a fio, volume russo, cola, removedor, primer, pinças e kits.",
+        precos:      `Os valores atualizados estão no nosso catálogo. Para tirar dúvidas, ${CONSULTE}.`,
+        promocoes:   `Para saber das promoções do momento, ${CONSULTE}.`,
+        pagamento:   `Para saber as formas de pagamento disponíveis, ${CONSULTE}.`,
+        frete:       `Para consultar prazo e valor do frete, ${CONSULTE}.`,
+        trocas:      `Para solicitar troca ou devolução, ${CONSULTE}.`,
+        cuidados:    `Para orientações de uso e cuidados com os produtos, ${CONSULTE}.`,
+        horario:     "Segunda a sexta, das 08:00 às 12:00 e das 13:00 às 17:30",
+        whatsapp:    "+55 14 99135-3315",   // texto exibido nos links
+        instagram:   "@beebloowbr",
+        catalogoUrl: "https://wa.me/c/56199915511869",
+        siteUrl:     "https://abelhinhavirtual.com.br"
+    };
+
+    /* ===== INTENÇÕES (ordem = prioridade) =====
+       keywords: palavras sem acento e em minúsculas.
+       - palavras com 3 letras ou menos: correspondência exata
+       - palavras maiores: início da palavra (ex. "cilio" casa "cilios")
+       - frases com espaço: correspondência da frase inteira */
+    const INTENTS = [
+        {
+            keywords: ["atendente", "humano", "whatsapp", "contato", "telefone", "falar com"],
+            response: () => `
+                💬 <strong>Fale com a nossa equipe</strong><br><br>
+                Atendimento humano pelo WhatsApp:<br>
+                <a href="${WHATS_LINK}" target="_blank" rel="noopener">${CONFIG.whatsapp}</a><br><br>
+                Instagram: ${CONFIG.instagram}<br>
+                Horário: ${CONFIG.horario}`
+        },
+        {
+            keywords: ["troca", "trocar", "devolucao", "devolver", "reembolso", "defeito", "arrependimento"],
+            response: () => `
+                🔄 <strong>Trocas e devoluções</strong><br><br>
+                ${CONFIG.trocas}`
+        },
+        {
+            keywords: ["frete", "entrega", "entregar", "envio", "enviar", "prazo", "correios", "retirada", "rastreio"],
+            response: () => `
+                🚚 <strong>Entrega e frete</strong><br><br>
+                ${CONFIG.frete}`
+        },
+        {
+            keywords: ["pagamento", "pagar", "pix", "cartao", "parcelar", "parcelamento", "boleto"],
+            response: () => `
+                💳 <strong>Formas de pagamento</strong><br><br>
+                ${CONFIG.pagamento}`
+        },
+        {
+            keywords: ["pedido", "comprar", "compra", "encomendar", "como faco"],
+            response: () => `
+                📦 <strong>Como fazer seu pedido</strong><br><br>
+                1. Escolha os produtos no catálogo:<br>
+                <a href="${CONFIG.catalogoUrl}" target="_blank" rel="noopener">Abrir catálogo</a><br>
+                2. Envie sua lista pelo WhatsApp:
+                <a href="${WHATS_LINK}" target="_blank" rel="noopener">${CONFIG.whatsapp}</a><br>
+                3. Confirme o pagamento e o envio.`
+        },
+        {
+            keywords: ["preco", "precos", "valor", "valores", "quanto", "custa", "promocao", "promocoes", "desconto", "oferta"],
+            response: () => `
+                💰 <strong>Preços e promoções</strong><br><br>
+                ${CONFIG.precos}<br><br>
+                ${CONFIG.promocoes}`
+        },
+        {
+            keywords: ["cuidado", "cuidados", "dica", "dicas", "aplicar", "aplicacao", "usar", "validade", "armazenar", "higiene", "como usar"],
+            response: () => `
+                ✨ <strong>Dicas e cuidados</strong><br><br>
+                ${CONFIG.cuidados}`
+        },
+        {
+            keywords: ["produto", "produtos", "cilio", "cilios", "catalogo", "cola", "adesivo", "removedor", "primer", "pinca", "pincas", "kit", "volume", "fio a fio"],
+            response: () => `
+                🛍️ <strong>Nossos produtos</strong><br><br>
+                ${CONFIG.categorias}<br><br>
+                Catálogo completo:
+                <a href="${CONFIG.catalogoUrl}" target="_blank" rel="noopener">Abrir catálogo</a>`
+        },
+        {
+            keywords: ["site", "loja online", "loja virtual", "link"],
+            response: () => `
+                🌐 <strong>Nosso site</strong><br><br>
+                Conheça a Bee Bloow online:<br>
+                <a href="${CONFIG.siteUrl}" target="_blank" rel="noopener">abelhinhavirtual.com.br</a>`
+        },
+        {
+            keywords: ["obrigado", "obrigada", "valeu", "tchau", "ate logo", "ate mais"],
+            response: () => `
+                💛 Por nada! Foi um prazer ajudar.<br><br>
+                Volte sempre à Bee Bloow! 🐝`
+        },
+        {
+            keywords: ["oi", "ola", "bom dia", "boa tarde", "boa noite", "e ai", "hey"],
+            response: () => `
+                Olá! 🐝<br><br>
+                É um prazer atender você na Bee Bloow.<br><br>
+                Como posso ajudar?`
+        }
+    ];
+
+    const DEFAULT_RESPONSE = () => `
+        🐝 Entendi sua mensagem, mas ainda não sei responder essa pergunta.<br><br>
+        Você pode perguntar sobre <strong>produtos, preços, pedidos,
+        pagamento, frete, trocas ou dicas de uso</strong>, ou falar com
+        a equipe pelo
+        <a href="${WHATS_LINK}" target="_blank" rel="noopener">WhatsApp</a>.`;
+
+
+    /* ===== FUNÇÕES ===== */
+
+    let busy = false;
+
+    function getTime() {
+        return new Date().toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function normalize(str) {
+        return str
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function matchesKeyword(normalized, words, kw) {
+        if (kw.includes(" ")) {
+            return (" " + normalized + " ").includes(" " + kw + " ");
+        }
+        return words.some(w => kw.length <= 3 ? w === kw : w.startsWith(kw));
+    }
+
+    function addMessage(html, type) {
+        const chat = document.getElementById("chatMessages");
+        const message = document.createElement("div");
+
+        message.classList.add("message", type);
+        message.innerHTML = `
+            <div class="message-content">
+                ${html}
+                <span class="time">${getTime()}</span>
+            </div>
+        `;
+
+        chat.appendChild(message);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+
+        if (text === "" || busy) return;
+
+        addMessage(escapeHtml(text), "user");
+        input.value = "";
+        simulateResponse(text);
+    }
+
+    function quickMessage(text) {
+        if (busy) return;
+        addMessage(escapeHtml(text), "user");
+        simulateResponse(text);
+    }
+
+    function simulateResponse(text) {
+        const typing = document.getElementById("typing");
+
+        busy = true;
+        typing.style.display = "block";
+
+        setTimeout(() => {
+            typing.style.display = "none";
+
+            const normalized = normalize(text);
+            const words = normalized.split(" ");
+
+            const intent = INTENTS.find(i =>
+                i.keywords.some(kw => matchesKeyword(normalized, words, kw))
+            );
+
+            addMessage(intent ? intent.response() : DEFAULT_RESPONSE(), "bot");
+            busy = false;
+        }, 1200);
+    }
+
+    function handleKey(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    }
+
+
+    /* ===== INICIALIZAÇÃO ===== */
+
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+    document.getElementById("messageInput").addEventListener("keydown", handleKey);
+
+    document.querySelectorAll(".option").forEach(btn => {
+        btn.addEventListener("click", () => quickMessage(btn.dataset.msg));
+    });
+
+    addMessage(`
+        Olá! 🐝<br><br>
+        Seja bem-vindo(a) à <strong>Bee Bloow</strong>, sua loja de produtos
+        para extensão de cílios.<br><br>
+        Como posso ajudar você?`, "bot");
+
+    addMessage(`
+        Você pode perguntar sobre:<br><br>
+        🛍️ Produtos e catálogo<br>
+        💰 Preços e promoções<br>
+        📦 Como fazer um pedido<br>
+        💳 Formas de pagamento<br>
+        🚚 Entrega e frete<br>
+        🔄 Trocas e devoluções<br>
+        ✨ Dicas de aplicação e cuidados<br>
+        🌐 Nosso site<br>
+        💬 Falar com um atendente`, "bot");
+
+</script>
+
+</body>
+</html>
